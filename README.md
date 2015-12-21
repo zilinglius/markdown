@@ -120,3 +120,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 ``@EnableGlobalMethodSecurity(prePostEnabled = true)`` will be discussed in next section.
 
+``http.httpBasic()`` tells the Spring Security using the basic http authentication. So we should provide usename and password in each http request. next lines of code are to configure the resources authentication rules.
+
+``http.csrf().disable()`` is to disable the csrf headers in a http request.
+

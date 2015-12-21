@@ -64,6 +64,7 @@ public class OpsUserDetailService implements UserDetailsService {
 ```
 
 There are three roles in operation management system, they are "admin", "manager" and "marketing" and mapped to "ROLE_ADMIN", "ROLE_MANAGER" and "ROLE_MARKETING" in function ``loadUserDetailByName`` respectively. And then, we should implement a function in ``classs SecurityConfiguration`` in order to make ``OpsUserdetailService`` effect. 
+
 Now, the user authentication is completed. Besides it, we still have to config the authentication of  the access to resouces, such as a URL, RESTful API. ``protected void configure(HttpSecurity http)`` in ``class SecurityConfiguration`` is the place to configure resouces authentication.
 
 ```java

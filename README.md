@@ -5,6 +5,8 @@
 Spring Security provides security functionality throuth authentication and authorization. 
 
 ##Authentication
+
+###User Authentication
 Authentication is to verify a user can access to the system. In this case, we use a customized ``UserDetailService`` named ``OpsUserDetailService`` to authenticate a user, the code as the following:
 
 ```java
@@ -65,6 +67,7 @@ public class OpsUserDetailService implements UserDetailsService {
 
 There are three roles in operation management system, they are "admin", "manager" and "marketing" and mapped to "ROLE_ADMIN", "ROLE_MANAGER" and "ROLE_MARKETING" in function ``loadUserDetailByName`` respectively. And then, we should implement a function in ``classs SecurityConfiguration`` in order to make ``OpsUserdetailService`` effect. 
 
+###Resources Authentication
 Now, the user authentication is completed. Besides it, we still have to config the authentication of  the access to resouces, such as a URL, RESTful API. ``protected void configure(HttpSecurity http)`` in ``class SecurityConfiguration`` is the place to configure resouces authentication.
 
 ```java
@@ -113,4 +116,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	}
 }
 ```
+``@EnableRedisHttpSession`` indicates that using http session stored in Redis to authenticate a request.
+
+``@EnableGlobalMethodSecurity(prePostEnabled = true)`` will be discussed in next section.
 

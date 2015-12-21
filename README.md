@@ -63,5 +63,53 @@ public class OpsUserDetailService implements UserDetailsService {
 }
 ```
 
-There are three roles in operation management system, they are "admin", "manager" and "marketing" and mapped to "ROLE_ADMIN", "ROLE_MANAGER" and "ROLE_MARKETING" in function ``loadUserDetailByName`` respectively.
+There are three roles in operation management system, they are "admin", "manager" and "marketing" and mapped to "ROLE_ADMIN", "ROLE_MANAGER" and "ROLE_MARKETING" in function ``loadUserDetailByName`` respectively. And then, we should implement a function in ``classs SecurityConfiguration`` in order to make ``OpsUserdetailService`` effect. 
+Now, the user authentication is completed. Besides it, we still have to config the authentication of  the access to resouces, such as a URL, RESTful API. ``protected void configure(HttpSecurity http)`` in ``class SecurityConfiguration`` is the place to configure resouces authentication.
+
+```java
+package ms.zui.operation.security;
+
+import javax.inject.Inject;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+
+@Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableRedisHttpSession
+@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+	@Inject
+	private OpsUserDetailService opsUserDetailService;
+	
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.httpBasic();
+		http
+			.authorizeRequests()
+				.regexMatchers(HttpMethod.OPTIONS, "/users", "/users/logout").permitAll()
+				.regexMatchers(HttpMethod.OPTIONS, "/restaurants").permitAll()
+				.antMatchers("/token").permitAll()
+				.anyRequest().authenticated();
+		
+		http.csrf().disable();
+	}
+	
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		auth
+			.userDetailsService(opsUserDetailService);
+				//.passwordEncoder(new BCryptPasswordEncoder());imp
+	}
+}
+```
 

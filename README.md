@@ -63,17 +63,5 @@ public class OpsUserDetailService implements UserDetailsService {
 }
 ```
 
-There are three roles in operation management system, they are "admin", "manager" and "marketing"
+There are three roles in operation management system, they are "admin", "manager" and "marketing" and mapped to "ROLE_ADMIN", "ROLE_MANAGER" and "ROLE_MARKETING" in function ``loadUserDetailByName`` respectively.
 
-```java
-public class User {
-    public User() {
-        
-        int nIndex = 10;
-        
-        System.out.println(nIndex);
-    }
-}
-```
-
-This is code block.

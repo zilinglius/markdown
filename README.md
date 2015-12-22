@@ -122,5 +122,40 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 ``http.httpBasic()`` tells the Spring Security using the basic http authentication. So we should provide usename and password in each http request. next lines of code are to configure the resources authentication rules.
 
+``.regexMatchers(HttpMethod.OPTIONS, "/users", "/users/logout").permitAll()`` configuration will allow "OPTIONS" request to "/users" in order to make cross origin request available. Because brower will automatically add a "OPTIONS" request before sending a "POST", "PUT" and "DELETE" cross origin request.
+
 ``http.csrf().disable()`` is to disable the csrf headers in a http request.
 
+##Authorization
+``@EnableGlobalMethodSecurity(prePostEnabled = true)`` will enable Spring Security use ``@PreAuthorize`` and ``@PostAuthorize`` to check user access to a resource. In this project, we just use ``@PreAuthorize`` in most conditions.
+
+For example, the following code is a function in ``UsersController``, add the notation ``@PreAuthorize("hasRole('ROLE_ADMIN')")`` in order to authorize admin user to access the resource. 
+
+```java
+    @RequestMapping(value="/users", method=RequestMethod.GET)
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+    public Collection<User> users(HttpSession session) {
+    	return Application.userService.getAllUsers();
+    }
+```
+
+Here we use roles to authorize. There are other options for authorization, such as Principal, which allow authorize a user to access a resource. For instance,
+
+```java
+    @RequestMapping(value="/users/{name}", method=RequestMethod.GET)
+	@PreAuthorize("hasRole('ROLE_ADMIN') or #username = authentication.name")
+    public ResponseEntity<User> getUserByName(@P(username) @PathVariable String name) {
+    	
+    	HttpStatus httpStatus = HttpStatus.OK;
+    	
+    	User user = Application.userService.getUserByName(name);
+    	
+    	if (user == null) {
+    		httpStatus = HttpStatus.NOT_FOUND;
+    	}
+    	
+    	return new ResponseEntity<User>(user, httpStatus);
+    }
+```
+
+The above codes set the roles for GET request to "/user/{name}". First, if a user is admin, he can access the resource, if not, the username in the URL should equal to ``authentication.name``

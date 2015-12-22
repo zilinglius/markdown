@@ -143,7 +143,7 @@ Here we use roles to authorize. There are other options for authorization, such 
 
 ```java
     @RequestMapping(value="/users/{name}", method=RequestMethod.GET)
-	@PreAuthorize("hasRole('ROLE_ADMIN') or #username = authentication.name")
+	@PreAuthorize("hasRole('ROLE_ADMIN') or #username == authentication.name")
     public ResponseEntity<User> getUserByName(@P("username") @PathVariable String name) {
     	
     	HttpStatus httpStatus = HttpStatus.OK;
